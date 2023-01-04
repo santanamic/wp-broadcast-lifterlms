@@ -1,0 +1,12 @@
+./.git
+./vendor
+./tools
+./dist
+.editorconfig
+.gitignore
+.php-cs-fixer.cache
+.php-cs-fixer.dist.php
+.pluginignore
+composer.json
+composer.lock
+pluginrelance.php
