@@ -486,6 +486,10 @@ class Broadcast_LifterLMS_Plugin
 
 		foreach( $post_ids as $index => $post_id )
 		{
+			if ( !$post_id ) {
+				continue;
+			}
+		
 			$this->debug( 'Broadcasting post part %d on blog %s.', $post_id, get_current_blog_id() );
 			// This is a workaround for the queue. As of 2019-02-13 there is a "bug" that makes the queue handle all instances of a post at the time.
 			// Ex: This makes it impossible to correctly broadcast a course: course, then lessons + topics etc, then the course again.
@@ -529,8 +533,11 @@ class Broadcast_LifterLMS_Plugin
 			return [];
 		}
 
+		$certificate_id = get_post_meta( $engagement_id, '_llms_engagement', true );
+		
 		$data = array( 'id' => $engagement_id, 
-			'engagement'      	  =>  get_post_meta( $engagement_id, '_llms_engagement', true ), 
+			'certificate_layout'  =>  get_post_meta( $certificate_id, '_llms_certificate_layout_template', true ), 
+			'engagement'      	  =>  $certificate_id, 
 			'engagement_trigger'  =>  get_post_meta( $engagement_id, '_llms_engagement_trigger_post', true ), 
 		);
 
@@ -697,7 +704,10 @@ class Broadcast_LifterLMS_Plugin
 			'_llms_plan_wc_pid' => [],
 			'_llms_redirect_page_id' => [],
 			'_llms_sales_page_content_page_id' => [],
+			'_llms_certificate_layout_template' => [],
 			'_llms_auto_enroll' => [],
+			'certificate_verse_image' => ['attachment', 'protect'],
+			'certificate_frontal_image' => ['attachment', 'protect'],
 			'_cover_id' => ['attachment', 'protect'],
 			'_llms_certificate_image' => ['attachment', 'protect' => []],
 			'_llms_certificate_image_verse' => ['attachment', 'protect' => []],
@@ -723,6 +733,13 @@ class Broadcast_LifterLMS_Plugin
 		if( in_array( $bcd->post->post_type, ['llms_certificate', 'course'] ) ) 
 		{
 			$bcd->custom_fields->blacklist[] = '_thumbnail_id';
+		}
+
+		// Ensures the image and highlighting is not transferred
+		if( in_array( $bcd->post->post_type, ['certificate-layout'] ) ) 
+		{
+			$bcd->custom_fields->blacklist[] = 'certificate_frontal_image';
+			$bcd->custom_fields->blacklist[] = 'certificate_verse_image';
 		}
 
 		if( $bcd->post->post_type == 'llms_question' ) 
@@ -819,7 +836,10 @@ class Broadcast_LifterLMS_Plugin
 			'_llms_redirect_page_id' => [],
 			'_llms_sales_page_content_page_id' => [],
 			'_llms_auto_enroll' => [],
+			'_llms_certificate_layout_template' => [],
 			'_cover_id' => ['attachment', 'protect'],
+			'certificate_verse_image' => ['attachment', 'protect'],
+			'certificate_frontal_image' => ['attachment', 'protect'],
 			'_llms_certificate_image' => ['attachment', 'protect'],
 			'_llms_certificate_image_verse' => ['attachment', 'protect'],
 		];
