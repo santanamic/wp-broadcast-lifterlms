@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Broadcast LifterLMS
-Version: 2.2.7
+Version: 2.3.0
 Description: 
 */
 
